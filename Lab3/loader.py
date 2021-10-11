@@ -35,12 +35,9 @@ if __name__ == '__main__':
         i.write(time_step + "\n")
         i.write(str(int(int(full_time)/float(time_step)))+"\n")
         i.write(namespace.discr_frq)
-    if (namespace.integrator == "kahon"):
-        os.system("g++ kahon_math_pendulum.cpp -o math_pendulum.out")
-        os.system("./math_pendulum.out")
-    else:
-        os.system("g++ math_pendulum.cpp -o math_pendulum.out")
-        os.system("./math_pendulum.out")
+
+    os.system(f"g++ {namespace.integrator}math_pendulum.cpp -o math_pendulum.out")
+    os.system("./math_pendulum.out")
 
     with open("angle.txt") as an:
         angle = np.array([float(i) for i in an.readlines()])
@@ -51,20 +48,32 @@ if __name__ == '__main__':
 
     time = [float(time_step)*i*float(discr_frq) for i in range(len(angle))]
 
-    rel_en_err = (np.array([energy[0]]*len(energy)) - energy)/(energy[0])
-     
-    plt.plot(time, angle)
-    plt.title(f"Угол от времени;\n шаг по времени {time_step}")
-    plt.show()
-    plt.plot(time, velocity)
-    plt.title(f"Производная угла от времени;\n шаг по времени {time_step}")
-    plt.show()
-    plt.plot(angle, velocity)
-    plt.title(f"Фазовая плоскость;\n шаг по времени {time_step}")
-    plt.show()
-    plt.plot(time, 100*rel_en_err)
-    plt.plot(time, (np.array([0]*len(energy))), color='red')
-    plt.title(f"Относительная ошибка интеграла движения;\n шаг по времени {time_step}")
+    rel_en_err = -(np.array([energy[0]]*len(energy)) - energy)/(energy[0])
+    
+    fig, ax = plt.subplots(ncols=2, nrows=2)    
+   
+    fig.suptitle(f"{namespace.integrator.capitalize()}, шаг {time_step}")    
+
+    ax[0][0].plot(time, angle)
+    ax[0][0].set_title(f"Угол от времени")
+
+    ax[1][0].plot(time, velocity)
+    ax[1][0].set_title(f"Производная угла от времени")
+
+    ax[0][1].plot(angle, velocity)
+    ax[0][1].set_title(f"Фазовая плоскость")
+
+    ax[1][1].plot(time, rel_en_err)
+    ax[1][1].plot(time, (np.array([0]*len(energy))), color='red')
+    ax[1][1].set_title(f"Относительная ошибка интеграла движения")
+    
+    for f in ax:
+        for i in f:
+            i.grid()
+
+
+    mng = plt.get_current_fig_manager()
+    mng.window.showMaximized()
     plt.show()
 
     os.system("rm math_pendulum.out")

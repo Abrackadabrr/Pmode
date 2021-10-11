@@ -3,7 +3,7 @@
 #include<array>
 #include<fstream>
 #include<istream>
-
+#include<cmath>
 using std::stof;
 
 struct Con{
@@ -21,37 +21,26 @@ std::pair<float, float> kahanSum(float a, float b, float compensation)
     return std::move(std::pair<float, float>{sum, compensation});
 }
 
-#if 0
-float count_energy()
-{
-    return (current_velocity*current_velocity)/2 + (constants.q_omega*(1 - current_angle)/ 2)/3.1415926
-}
-#endif
 std::array<float,3> next_step(float current_angle, float current_velocity, Con constants)
 {
-    float  next_velocity = current_velocity - constants.q_omega * current_angle * constants.time_step;
+    float  next_velocity = current_velocity - constants.q_omega * std::sin(current_angle) * constants.time_step;
     float next_angle = current_angle + current_velocity * constants.time_step;
-    float next_energy =  (current_velocity*current_velocity)/2 + (constants.q_omega*current_angle*current_angle/2);
-//    float next_energy =  (current_velocity*current_velocity)/2 + (constants.q_omega*(1- current_angle)/2)/3.14159;
+    float next_energy =  (current_velocity*current_velocity)/2 + (constants.q_omega*(1 - std::cos(current_angle)));
     return std::move(std::array<float, 3>{next_angle, next_velocity, next_energy});
 }
 
 
 std::array<std::vector<float>, 3> calculate(Con constants,int full_iters)
 {
-    std::ofstream dbg("debug.txt");
-
     std::vector<float> angles;
     angles.push_back(constants.start_angel);
     std::vector<float> velocity;
     velocity.push_back(constants.start_velocity);
     std::vector<float> energy;
-    energy.push_back((*velocity.rbegin())*(*velocity.rbegin())/2 + (constants.q_omega*(*angles.rbegin())*(*angles.rbegin())/2));
-//    energy.push_back((*velocity.rbegin())*(*velocity.rbegin())/2 + (constants.q_omega*(1-(*angles.rbegin())/2)/3.14159));
+    energy.push_back((*velocity.rbegin())*(*velocity.rbegin())/2 + (constants.q_omega*(1-std::cos(*angles.rbegin()))));
 
     for(int i = 0; i < full_iters; ++i) {
         auto next_step1 = next_step(*angles.rbegin(), *velocity.rbegin(), constants);
-        dbg << *angles.rbegin()<< " " << *velocity.rbegin() << "\n";
         angles.push_back(next_step1[0]);
         velocity.push_back(next_step1[1]);
         energy.push_back(next_step1[2]);
@@ -61,8 +50,6 @@ std::array<std::vector<float>, 3> calculate(Con constants,int full_iters)
 
 int main()
 {
-    std::cout << "I am stupid" << std::endl;
-
     std::ofstream an("angle.txt");
     std::ofstream vel("velocity.txt");
     std::ofstream en("energy.txt");
