@@ -47,13 +47,13 @@ std::array<std::vector<float>, 3> calculate(Con constants,int full_iters)
     float vel_comp = 0.;
     float energy_comp = 0.;    
 
-    std::vector<float> angles;
+    std::vector<float> angles(full_iters);
     angles.push_back(constants.start_angel);
 
-    std::vector<float> velocity;
+    std::vector<float> velocity(full_iters);
     velocity.push_back(constants.start_velocity);
 
-    std::vector<float> energy;
+    std::vector<float> energy(full_iters);
     energy.push_back((*velocity.rbegin())*(*velocity.rbegin())/2 + (constants.q_omega*(1 - std::cos(*angles.rbegin()))));
 
 
@@ -63,8 +63,7 @@ std::array<std::vector<float>, 3> calculate(Con constants,int full_iters)
         angles.push_back(next_step1[0].first);
         velocity.push_back(next_step1[1].first);
         energy.push_back(next_step1[2].first);
-        
-        
+
         angle_comp = next_step1[0].second;
         vel_comp = next_step1[1].second;
         energy_comp = next_step1[2].second; 
@@ -73,8 +72,7 @@ std::array<std::vector<float>, 3> calculate(Con constants,int full_iters)
 }
 
 int main()
-{   
-
+{
     std::ofstream an("angle.txt");
     std::ofstream vel("velocity.txt");
     std::ofstream en("energy.txt");

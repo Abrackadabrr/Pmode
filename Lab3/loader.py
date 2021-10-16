@@ -23,7 +23,7 @@ def createParser ():
 if __name__ == '__main__':
 
     parser = createParser()
-    namespace = parser.parse_args (sys.argv[1:]) 
+    namespace = parser.parse_args(sys.argv[1:])
     time_step = namespace.time_step
     full_time = namespace.full_time
     discr_frq = namespace.discr_frq
@@ -52,7 +52,7 @@ if __name__ == '__main__':
     
     fig, ax = plt.subplots(ncols=2, nrows=2)    
    
-    fig.suptitle(f"{namespace.integrator.capitalize()}, шаг {time_step}")    
+    fig.suptitlefig.suptitle(f"{namespace.integrator.capitalize()}, шаг {time_step}")    
 
     ax[0][0].plot(time, angle)
     ax[0][0].set_title(f"Угол от времени")
@@ -71,13 +71,11 @@ if __name__ == '__main__':
         for i in f:
             i.grid()
 
-
     mng = plt.get_current_fig_manager()
     mng.window.showMaximized()
     plt.show()
 
     os.system("rm math_pendulum.out")
-    os.system("rm input.txt")
     if not namespace.save_temps:
         os.system("rm velocity.txt")
         os.system("rm angle.txt")

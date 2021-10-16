@@ -28,7 +28,6 @@ std::array<float,3> next_step(float current_angle, float current_velocity, Con c
     return std::move(std::array<float, 3>{hyne_angle, hyne_velocity, next_energy});
 }
 
-
 std::array<std::vector<float>, 3> calculate(Con constants,int full_iters)
 {
     std::vector<float> angles;

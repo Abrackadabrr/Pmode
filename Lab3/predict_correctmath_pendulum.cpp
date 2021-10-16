@@ -28,11 +28,11 @@ std::array<float,3> next_step(float current_angle, float current_velocity, Con c
 
 std::array<std::vector<float>, 3> calculate(Con constants,int full_iters)
 {
-    std::vector<float> angles;
+    std::vector<float> angles(full_iters);
     angles.push_back(constants.start_angel);
-    std::vector<float> velocity;
+    std::vector<float> velocity(full_iters);
     velocity.push_back(constants.start_velocity);
-    std::vector<float> energy;
+    std::vector<float> energy(full_iters);
     energy.push_back((*velocity.rbegin())*(*velocity.rbegin())/2 + (constants.q_omega*(1-std::cos(*angles.rbegin()))));
 
     for(int i = 0; i < full_iters; ++i) {
@@ -64,8 +64,8 @@ int main()
 
     auto data = calculate(constants, stoi(full_steps));
 
-    int d_frq = std::stoi(discr_freq);
 
+    int d_frq = std::stoi(discr_freq);
     int i = 0; 
     for(auto& as:data[0]) {
         if (i % d_frq == 0) 
