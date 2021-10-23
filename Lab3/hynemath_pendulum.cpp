@@ -25,12 +25,13 @@ std::array<float,3> next_step(float current_angle, float current_velocity, Con c
     float hyne_angle = (eiler_next_angle + next_angle) / 2.f;
  
     float next_energy =  (current_velocity*current_velocity)/2 + (constants.q_omega*(1 - std::cos(current_angle)));
-    return std::move(std::array<float, 3>{hyne_angle, hyne_velocity, next_energy});
+    return (std::array<float, 3>{hyne_angle, hyne_velocity, next_energy});
 }
 
 std::array<std::vector<float>, 3> calculate(Con constants,int full_iters)
 {
     std::vector<float> angles;
+    angles.reserve(full_iters);
     angles.push_back(constants.start_angel);
     std::vector<float> velocity;
     velocity.push_back(constants.start_velocity);
@@ -43,7 +44,7 @@ std::array<std::vector<float>, 3> calculate(Con constants,int full_iters)
         velocity.push_back(next_step1[1]);
         energy.push_back(next_step1[2]);
     } 
-    return std::move(std::array<std::vector<float>, 3>{std::move(angles), std::move(velocity), std::move(energy)});
+    return std::array<std::vector<float>, 3>{std::move(angles), std::move(velocity), std::move(energy)};
 }
 
 int main()

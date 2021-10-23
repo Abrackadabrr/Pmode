@@ -1,3 +1,15 @@
+*.fuse*
 
-/cmake-build-debug
-/__pycash__
+cmake-build-debug/
+
+__pycache__/
+
+.idea/
+
+debug*
+
+*.out
+
+token.txt
+
+*Data/
