@@ -2,6 +2,8 @@
 
 cmake-build-debug/
 
+CMake*
+
 __pycache__/
 
 .idea/
@@ -12,4 +14,8 @@ debug*
 
 token.txt
 
-*Data/
+*Data*/
+
+*.ipynb*
+
+CodeReview/
