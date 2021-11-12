@@ -7,7 +7,7 @@ namespace PhysicalModels {
     /*
      * This class tris to model 2 order ODE describes ideal math pendulum
      * Make sure that std::vector state accurately have four parameters
-     * That is [angle, it's derivative, current_time, time_step], but functions don't really depend on current_time
+     * That is [angle, it's derivative], but functions don't really depend on current_time
      */
     class PeriodicPotential {
     private:
@@ -18,18 +18,18 @@ namespace PhysicalModels {
             double omega;
 
             double psiFunction(std::vector<double> &state) const {
-                return state[1] - omega * std::sin(state[0]) * state[3];
+                return (-omega * std::sin(state[0]));
             }
 
             double xiFunction(std::vector<double> &state) const {
-                return state[0] + state[1] * state[3];
+                return state[1];
             }
 
         public:
             VectorFunction(double om) : omega(om) {};
 
-            std::vector<double> operator()(std::vector<double> &n_state) const {
-                return std::vector<double>{xiFunction(n_state), psiFunction(n_state), n_state[2], n_state[3]};
+            std::vector<double> operator()(std::vector<double> &n_state, double time) const {
+                return std::vector<double>{xiFunction(n_state), psiFunction(n_state)};
             }
         };
 

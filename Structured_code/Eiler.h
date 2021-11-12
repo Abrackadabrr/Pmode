@@ -7,31 +7,33 @@ namespace ODE_Solvers{
     /*
      * Sub-function for eiler_method
      * Make only one step in this method
-     * Make sure that arguments of vector_function is exactly std::vector<value_t>
+     * Make sure that arguments of vector_function is exactly std::vector<value_t> and time
      */
     template<typename value_t, typename vector_function>
-    std::vector<value_t> eiler_next_step(const vector_function& func, std::vector<value_t>& values) {
-        return func(values);
+    std::vector<value_t> eiler_next_step(const vector_function& func, std::vector<value_t>& state, value_t time, value_t timestep) {
+        return std::move(state + func(state, time)*timestep);
     }
 
     /*
      * Based on eiler_next_method
      * Make n_iters iterations of method
-     * Make sure that arguments of vector_function is exactly std::vector<value_t>
+     * Make sure that arguments of vector_function is exactly std::vector<value_t> and time
      * initial_state is initial state of a system
      */
     template<typename value_t, typename vector_function>
-    std::vector<std::vector<value_t>> eiler_method(vector_function func, const std::vector<value_t>& initial_state, int n_iters){
-        std::vector<std::vector<value_t>> result(initial_state.size());
+    std::vector<std::vector<value_t>> eiler_method(vector_function func, const std::vector<value_t>& initial_state,
+                                                    value_t initial_time, value_t timestep, int n_iters) {
+        std::vector<std::vector<value_t>> result;
+        result.reserve(n_iters);
+
         auto state = initial_state;
-        for (auto param_sequnce_approximation: result)
-            param_sequnce_approximation.reserve(n_iters);
-        for (int i = 0; i < n_iters; ++i)
-        {
-            state = ODE_Solvers::eiler_next_step(func, state);
-            state[state.size() - 2] += state[state.size() - 1];
-            std::cout << state  << std::endl;
+        value_t time = initial_time;
+        result.push_back(state);
+        for (int i = 0; i < n_iters; ++i) {
+            state = ODE_Solvers::eiler_next_step(func, state, time, timestep);
+            time += timestep;
+            result.push_back(state);
         }
-        return result;
+        return std::move(result);
     }
 }

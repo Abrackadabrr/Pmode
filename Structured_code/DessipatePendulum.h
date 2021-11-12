@@ -15,18 +15,19 @@ namespace PhysicalModels {
         private:
             double omega;
             double decrement;
+
             double psiFunction(std::vector<double> &state) const {
-                return state[1] - (2* decrement*state[1] + omega * std::sin(state[0])) * state[3];
+                return -(2* decrement*state[1] + omega * std::sin(state[0]));
             }
 
             double xiFunction(std::vector<double> &state) const {
-                return state[0] + state[1] * state[3];
+                return state[1];
             }
 
         public:
             VectorFunction(double om, double decr) : omega(om), decrement(decr) {};
 
-            std::vector<double> operator()(std::vector<double> &n_state) const {
+            std::vector<double> operator()(std::vector<double> &n_state, double time) const {
                 return std::vector<double>{xiFunction(n_state), psiFunction(n_state), n_state[2], n_state[3]};
             }
         };
@@ -38,6 +39,11 @@ namespace PhysicalModels {
         double getDecrement() { return decrement; };
         void setDecrement(double omeg) { decrement = omeg; };
         auto getVectorFunction() {return VectorFunction(omega, decrement);};
+        double countEnergy(double current_angle,double current_velocity)
+        {
+            double next_energy =  (current_velocity*current_velocity)/2 + (omega*(1 - std::cos(current_angle)));
+            return next_energy;
+        }
     };
 }
 
