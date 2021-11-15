@@ -1,6 +1,7 @@
 #ifndef STRUCTURED_CODE_VECTRORS_H
 #define STRUCTURED_CODE_VECTRORS_H
-
+#include <algorithm>
+#include <fstream>
 /*
  * Returns value_t that is result of scalar producing of vectors
  */
@@ -15,13 +16,9 @@ value_t operator*(const std::vector<value_t>& first, const std::vector<value_t>&
  */
 template<typename value_t>
 std::vector<value_t> operator+(const std::vector<value_t>& first, const std::vector<value_t>& second) {
-    std::vector<value_t> result;
-    result.reserve(first.size());
-    auto it2 = second.begin();
-    for (auto it = first.begin(), end = first.end(); it < end; ++it, ++it2){
-        result.push_back(*it + *it2);
-    }
-    return std::move(result);
+    std::vector<value_t> result(first.size());
+    std::transform(first.begin(), first.end(), second.begin(), result.begin(), std::plus<>());
+    return result;
 }
 
 /*
@@ -58,7 +55,6 @@ std::vector<value_type> sequence(value_type start, value_type stop, value_type s
     return std::move(result);
 }
 
-
 /*
  * Output operator
  * value_t is required to have the similar output operator
@@ -72,4 +68,15 @@ std::ostream &operator << (std::ostream &os, const std::vector<value_t>& v)
     return os;
 }
 
+/*
+ * Output function for csv type
+ * value_t is required to have an output operator
+ */
+template<typename value_t>
+void printCsvFormat(std::ostream &os, const std::vector<value_t>& v)
+{
+    for(int i = 0; i < v.size() - 1; i++)
+    {os << v[i] <<";";};
+    os << v[v.size() - 1];
+}
 #endif //STRUCTURED_CODE_VECTRORS_H
